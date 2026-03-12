@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-check-job
+  annotations:
+    argocd.argoproj.io/sync-wae: "2"
+    
+spec:
+  backoffLimit: 2
+  template:
+        spec:
+          restarPolicy: Never
+          cointainers:
+            - name: migraion
+              image: busybox
+              command:
+                - "sh"
+                - "-c"
+                - "echo 'Runing db check.. to db host' sleep 10; echo 'Done'"
+              env:
+                - name: DB_HOST
+                  valueFromm:
+                    configMapKeyRef:
+                      name: db-config
+                      key: DB_HOST    
